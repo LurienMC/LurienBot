@@ -1,7 +1,9 @@
 package dev.lurien.bot;
 
 import dev.lurien.bot.commands.CommandsManager;
-import dev.lurien.bot.commands.StaffModeTop;
+import dev.lurien.bot.commands.NukeCommand;
+import dev.lurien.bot.commands.ShipCommand;
+import dev.lurien.bot.commands.StaffModeTopCommand;
 import dev.lurien.bot.listeners.MainListener;
 import io.github.cdimascio.dotenv.Dotenv;
 import lombok.Getter;
@@ -38,6 +40,7 @@ public final class LurienBot extends JavaPlugin {
     @Getter @Setter
     private static Role headStaffRole;
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     @Override
     public void onEnable() {
         File envFile = new File(getDataFolder(), ".env");
@@ -65,7 +68,9 @@ public final class LurienBot extends JavaPlugin {
     }
 
     private void registerCommands() {
-        commandsManager.add(new StaffModeTop());
+        commandsManager.add(new StaffModeTopCommand());
+        commandsManager.add(new NukeCommand());
+        commandsManager.add(new ShipCommand());
     }
 
     @Override

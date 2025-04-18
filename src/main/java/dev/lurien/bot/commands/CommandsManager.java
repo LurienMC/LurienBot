@@ -41,7 +41,7 @@ public class CommandsManager extends ListenerAdapter {
                 return;
             }
             for (String alias : command.getAliases()) {
-                if(command.getName().equals(alias)){
+                if(event.getName().equals(alias)){
                     command.execute(event);
                     return;
                 }
