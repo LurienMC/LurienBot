@@ -5,3 +5,9 @@ api-version: '1.21'
 prefix: LurienBot
 authors: [ DamianFarias ]
 description: Discord Bot of LurienMC Server
+commands:
+  vinculate:
+    description: Minecraft Command to vinculate to a Discord account
+    aliases:
+      - vincular
+      - vinculation

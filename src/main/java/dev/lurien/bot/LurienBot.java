@@ -1,7 +1,10 @@
 package dev.lurien.bot;
 
 import dev.lurien.bot.commands.*;
+import dev.lurien.bot.commands.minecraft.VinculationCommand;
+import dev.lurien.bot.configuration.LinkedAccountsConfig;
 import dev.lurien.bot.listeners.MainListener;
+import dev.lurien.bot.managers.LinkedAccountsManager;
 import io.github.cdimascio.dotenv.Dotenv;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,6 +36,8 @@ public final class LurienBot extends JavaPlugin {
     private static final String crossEmoji = "<:x_luriencito:1361496153643941959>";
     @Getter
     private static final String warnEmoji = "<:warn_luriencito:1361500860026192053>";
+    @Getter
+    private static LinkedAccountsConfig linkedAccountsConfig;
 
     @Getter @Setter
     private static Role headStaffRole;
@@ -56,6 +61,9 @@ public final class LurienBot extends JavaPlugin {
 
         registerCommands();
 
+        linkedAccountsConfig = new LinkedAccountsConfig(this);
+        LinkedAccountsManager.load(linkedAccountsConfig.getConfig());
+
         jda = JDABuilder.createDefault(dotenv.get("TOKEN"), Arrays.asList(GatewayIntent.values()))
                 .setStatus(OnlineStatus.ONLINE)
                 .setActivity(Activity.playing("LurienMC"))
@@ -65,10 +73,13 @@ public final class LurienBot extends JavaPlugin {
     }
 
     private void registerCommands() {
+        getCommand("vinculate").setExecutor(new VinculationCommand());
+        getCommand("vinculate").setTabCompleter(new VinculationCommand());
         commandsManager.add(new StaffModeTopCommand());
         commandsManager.add(new NukeCommand());
         commandsManager.add(new ShipCommand());
         commandsManager.add(new EighthBallCommand());
+        commandsManager.add(new LinkAccountCommand());
     }
 
     @Override

@@ -16,6 +16,7 @@ public class MainListener extends ListenerAdapter {
             LurienStaff.setStaffModeChannel(event.getGuild().getNewsChannelById(1361900553587921027L));
             LurienStaff.setChatChannel(event.getGuild().getNewsChannelById(1361906583118020779L));
             LurienStaff.setActivityChannel(event.getGuild().getNewsChannelById(1361900904554696825L));
+            LurienStaff.setModerationLogsChannel(event.getGuild().getNewsChannelById(1362878828422238459L));
         }
     }
 }
