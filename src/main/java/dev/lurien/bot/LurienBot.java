@@ -3,6 +3,7 @@ package dev.lurien.bot;
 import dev.lurien.bot.commands.*;
 import dev.lurien.bot.commands.minecraft.VinculationCommand;
 import dev.lurien.bot.configuration.LinkedAccountsConfig;
+import dev.lurien.bot.listeners.LinkedAccountsListener;
 import dev.lurien.bot.listeners.MainListener;
 import dev.lurien.bot.managers.LinkedAccountsManager;
 import io.github.cdimascio.dotenv.Dotenv;
@@ -67,8 +68,7 @@ public final class LurienBot extends JavaPlugin {
         jda = JDABuilder.createDefault(dotenv.get("TOKEN"), Arrays.asList(GatewayIntent.values()))
                 .setStatus(OnlineStatus.ONLINE)
                 .setActivity(Activity.playing("LurienMC"))
-                .addEventListeners(new MainListener())
-                .addEventListeners(commandsManager)
+                .addEventListeners(new MainListener(), commandsManager, new LinkedAccountsListener())
                 .build();
     }
 

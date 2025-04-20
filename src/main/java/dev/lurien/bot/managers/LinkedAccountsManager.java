@@ -2,10 +2,14 @@ package dev.lurien.bot.managers;
 
 import dev.lurien.bot.LurienBot;
 import dev.lurien.bot.model.DiscordLinkRequest;
+import dev.lurien.staff.lurienStaff.LurienStaff;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
@@ -93,15 +97,27 @@ public class LinkedAccountsManager {
                             + member.getEffectiveName() + "&f). Para vincular usa el comando:\n&e/vincular <código>");
         }
 
-        hook.sendMessage(LurienBot.getTickEmoji() + " Para continuar el proceso, mira tus mensajes privados.").queue();
 
-        member.getUser().openPrivateChannel().queue(channel ->
-                channel.sendMessageEmbeds(new EmbedBuilder()
-                        .setTitle("Solicitud de vinculación creada")
-                        .setDescription("Ingresa al servidor de Minecraft con tu cuenta y usa el comando:\n**/vincular " + codeStr + "**")
-                        .setThumbnail("https://cdn.discordapp.com/attachments/882789546339741716/1363213381145989200/raw.png")
-                        .setFooter("Created by @octdamfar", Objects.requireNonNull(hook.getInteraction().getGuild()).getIconUrl())
-                        .build()).queue());
+        Message message = member.getUser().openPrivateChannel().complete().sendMessageEmbeds(new EmbedBuilder()
+                .setTitle("Solicitud de vinculación creada")
+                .setColor(0x6286FF)
+                .setDescription("Ingresa al servidor de Minecraft con tu cuenta y usa el comando:\n### /vincular " + codeStr)
+                .setThumbnail("https://cdn.discordapp.com/attachments/882789546339741716/1363213381145989200/raw.png")
+                .setFooter("Created by @octdamfar", Objects.requireNonNull(hook.getInteraction().getGuild()).getIconUrl())
+                .build())
+                .setActionRow(Button.danger("cvi;"+codeStr, "Cancelar Vinculación")).complete();
+
+
+        hook.sendMessage(LurienBot.getTickEmoji() + " Para continuar el proceso mira este mensaje -> https://discord.com/channels/@me/" + message.getChannelId() +"/" + message.getId()).queue();
+
+        LurienStaff.getActivityChannel().sendMessageEmbeds(new EmbedBuilder()
+                .setTitle("Intento de vinculación")
+                .setThumbnail("https://cdn.discordapp.com/attachments/882789546339741716/1363213381145989200/raw.png")
+                .setFooter("Created by @octdamfar")
+                .setColor(0x003AFF)
+                .addField("Nick de Minecraft", nick, true)
+                .addField("Usuario de Discord", member.getEffectiveName() + " ("+member.getUser().getId()+")", false).build())
+                .setActionRow(Button.danger("cvis;"+codeStr, "Cancelar Solicitúd"), Button.primary("fvi;"+codeStr, "Forzar Vinculación")).queue();
     }
 
     public static void vinculate(DiscordLinkRequest req, Player player) {
@@ -110,12 +126,24 @@ public class LinkedAccountsManager {
 
         if (m != null) {
             m.getUser().openPrivateChannel().queue(channel ->
-                    channel.sendMessage(LurienBot.getTickEmoji() + " Te vinculaste a la cuenta de Minecraft **" + player.getName() + "**").queue());
+                    channel.sendMessage(LurienBot.getTickEmoji() + " Te has vinculado a la cuenta de Minecraft: ***" + player.getName() + "***").queue());
 
             sendMessage(player, "#6286FF&lD#5976F5&li#5067EB&ls#4757E1&lc#3D47D7&lo#3438CD&lr#2B28C3&ld &f» &a&l✔ &aTe vinculaste a la cuenta de Discord " + m.getEffectiveName() + " (" + m.getUser().getIdLong() + ")");
         }
 
-        linkAccount(player.getName(), req.memberID()); // Incluye save
+        linkAccount(player.getName(), req.memberID());
+    }
+
+    public static void vinculateOffline(DiscordLinkRequest req, String nick) {
+        toLink.remove(req);
+        Member m = LurienBot.getGuild().getMemberById(req.memberID());
+
+        if (m != null) {
+            m.getUser().openPrivateChannel().queue(channel ->
+                    channel.sendMessage(LurienBot.getTickEmoji() + " Te has vinculado a la cuenta de Minecraft: ***" + nick + "***").queue());
+        }
+
+        linkAccount(nick, req.memberID());
     }
 
     public static String getNick(long memberID) {
