@@ -42,6 +42,9 @@ public final class LurienBot extends JavaPlugin {
 
     @Getter @Setter
     private static Role headStaffRole;
+    @Getter @Setter
+    private static Role moderatorRole;
+
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     @Override
