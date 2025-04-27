@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 import java.time.OffsetDateTime;
@@ -24,7 +25,7 @@ public class NukeCommand implements ICommand {
 
     @Override
     public List<OptionData> getOptions() {
-        return List.of();
+        return List.of(new OptionData(OptionType.BOOLEAN, "silencio", "No enviar un mensaje global sobre los datos de la eliminación", false));
     }
 
     @Override
@@ -40,7 +41,7 @@ public class NukeCommand implements ICommand {
             return;
         }
 
-        event.reply("🧹 Comenzando limpieza del canal...").submit().thenCompose(hook ->
+        event.reply("🧹 Comenzando limpieza del canal...").setEphemeral(true).submit().thenCompose(hook ->
                 hook.retrieveOriginal().submit()
         ).thenAccept(botMessage -> {
             Set<String> excludeIds = new HashSet<>();
